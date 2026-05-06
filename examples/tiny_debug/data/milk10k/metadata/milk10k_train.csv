@@ -1,0 +1,5 @@
+lesion,derm_path,field_path,label,age,sex,anatom_site,skin_tone,is_synthetic,sample_weight
+tiny_001,images/dermoscopy/tiny_001_derm.jpg,images/clinical/tiny_001_clin.jpg,MEL,50,female,torso,3,0,1.0
+tiny_002,images/dermoscopy/tiny_002_derm.jpg,images/clinical/tiny_002_clin.jpg,NV,55,male,upper extremity,3,0,1.0
+tiny_003,images/dermoscopy/tiny_003_derm.jpg,images/clinical/tiny_003_clin.jpg,BCC,60,female,head/neck,3,0,1.0
+tiny_004,images/dermoscopy/tiny_004_derm.jpg,images/clinical/tiny_004_clin.jpg,BKL,65,male,lower extremity,3,0,1.0

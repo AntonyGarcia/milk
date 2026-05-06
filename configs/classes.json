@@ -1,0 +1,16 @@
+{
+  "class_names": [
+    "AKIEC",
+    "BCC",
+    "BEN_OTH",
+    "BKL",
+    "DF",
+    "INF",
+    "MAL_OTH",
+    "MEL",
+    "NV",
+    "SCCKA",
+    "VASC"
+  ],
+  "num_classes": 11
+}

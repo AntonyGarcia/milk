@@ -1,0 +1,2 @@
+lesion,derm_path,field_path,label,age,sex,anatom_site,skin_tone,ulceration_crust,hair,vasculature,erythema,pigmentation,gel,skin_markings,is_synthetic,sample_weight
+MILK_000001,images/dermoscopy/MILK_000001_derm.jpg,images/clinical/MILK_000001_clin.jpg,MEL,65-69,female,lower extremity,3,0.02,0.10,0.44,0.12,0.91,0.00,0.01,0,1.0

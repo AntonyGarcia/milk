@@ -1,0 +1,2 @@
+lesion,derm_path,field_path,age,sex,anatom_site,skin_tone,ulceration_crust,hair,vasculature,erythema,pigmentation,gel,skin_markings
+MILK_TEST_0001,images/dermoscopy/MILK_TEST_0001_derm.jpg,images/clinical/MILK_TEST_0001_clin.jpg,60-64,female,torso,2,0.01,0.04,0.20,0.33,0.70,0.00,0.03

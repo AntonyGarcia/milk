@@ -1,0 +1,34 @@
+project:
+  architecture: MilkTriFormer
+  entrypoint: train_milk10k_transformer.py
+  config_style: editable_global_variables
+
+image:
+  image_size: 224
+  default_backbone: swin_base_patch4_window7_224
+  pretrained_backbone: true
+  share_derm_field_encoder: true
+
+fusion:
+  fusion_dim: 512
+  fusion_layers: 3
+  fusion_heads: 8
+  modality_dropout_probability: 0.20
+
+training:
+  epochs: 30
+  batch_size: 16
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  mixed_precision: true
+  best_model_metric: macro_f1_tuned_threshold
+
+synthetic:
+  default_real_fraction_per_batch: 0.75
+  default_synthetic_fraction_per_batch: 0.25
+  synthetic_loss_weight: 0.50
+
+outputs:
+  checkpoints: checkpoints/
+  logs: logs/
+  predictions: outputs/

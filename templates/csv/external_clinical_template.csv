@@ -1,0 +1,2 @@
+image_id,image_path,label,binary_label,age,sex,anatom_site,fitzpatrick,dataset,is_synthetic,sample_weight
+PAD_0001,images/PAD_0001.jpg,BCC,1,72,male,head/neck,3,pad_ufes_20,0,0.7

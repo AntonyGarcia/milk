@@ -1,0 +1,83 @@
+datasets:
+  milk10k:
+    role: target
+    modality: paired dermoscopy + clinical/field + metadata
+    root: data/milk10k
+    train_csv: metadata/milk10k_train.csv
+    val_csv: metadata/milk10k_val.csv
+    test_csv: metadata/milk10k_test.csv
+  isic2019:
+    role: external
+    modality: dermoscopy
+    root: data/isic2019
+    train_csv: metadata/isic2019_train.csv
+  isic2020:
+    role: external_binary
+    modality: dermoscopy + metadata
+    root: data/isic2020
+    train_csv: metadata/isic2020_train.csv
+  isic2024_slice3d:
+    role: external_binary
+    modality: field-like total-body-photo crop + metadata
+    root: data/isic2024_slice3d
+    train_csv: metadata/isic2024_train.csv
+  synthetic_gan_isic2019:
+    role: synthetic
+    modality: synthetic dermoscopy
+    root: data/synthetic_gan_isic2019
+    train_csv: metadata/synthetic_train.csv
+  mednode:
+    role: external
+    modality: macroscopic clinical
+    root: data/mednode
+    train_csv: metadata/mednode_train.csv
+  edinburgh_dermofit:
+    role: external
+    modality: macroscopic clinical
+    root: data/edinburgh_dermofit
+    train_csv: metadata/dermofit_train.csv
+  pad_ufes_20:
+    role: external
+    modality: smartphone clinical + metadata
+    root: data/pad_ufes_20
+    train_csv: metadata/pad_ufes_train.csv
+  derm7pt:
+    role: external
+    modality: paired clinical + dermoscopy
+    root: data/derm7pt
+    train_csv: metadata/derm7pt_train.csv
+  ph2:
+    role: external
+    modality: dermoscopy
+    root: data/ph2
+    train_csv: metadata/ph2_train.csv
+  ham10000:
+    role: external
+    modality: dermoscopy + limited metadata
+    root: data/ham10000
+    train_csv: metadata/ham10000_train.csv
+  bcn20000:
+    role: external
+    modality: dermoscopy
+    root: data/bcn20000
+    train_csv: metadata/bcn20000_train.csv
+  derm12345:
+    role: external
+    modality: dermoscopy
+    root: data/derm12345
+    train_csv: metadata/derm12345_train.csv
+  ddi:
+    role: external
+    modality: clinical
+    root: data/ddi
+    train_csv: metadata/ddi_train.csv
+  ddi2:
+    role: external
+    modality: clinical
+    root: data/ddi2
+    train_csv: metadata/ddi2_train.csv
+  scin:
+    role: external_weak
+    modality: clinical close-up/context + metadata
+    root: data/scin
+    train_csv: metadata/scin_train.csv

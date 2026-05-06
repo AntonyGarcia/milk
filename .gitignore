@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.env
+
+# Training artifacts
+checkpoints/*.pt
+checkpoints/*.pth
+logs/*.json
+logs/*.jsonl
+outputs/*.csv
+outputs/*.npy
+outputs/*.npz
+outputs/*.pt
+
+# Large datasets: keep the structure and docs, ignore actual payloads.
+data/**/images/**
+!data/**/images/README.md
+!data/**/images/**/.gitkeep
+data/**/metadata/*.csv
+!data/**/metadata/*template*.csv
+!data/**/metadata/README.md
+
+# Example debug outputs
+examples/tiny_debug/checkpoints/*.pt
+examples/tiny_debug/logs/*
+examples/tiny_debug/outputs/*
+!examples/tiny_debug/checkpoints/README.md
+!examples/tiny_debug/logs/README.md
+!examples/tiny_debug/outputs/README.md
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/

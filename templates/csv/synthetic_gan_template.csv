@@ -1,0 +1,2 @@
+image_id,image_path,label,is_synthetic,sample_weight
+SYN_000001,images/SYN_000001.jpg,MEL,1,0.5

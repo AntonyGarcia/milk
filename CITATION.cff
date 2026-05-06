@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this repository, cite it as software and cite the original datasets separately."
+title: "MilkTriFormer MILK10k Training Repository"
+version: "0.1.0"
+date-released: "2026-05-06"
+authors:
+  - family-names: "Repository Maintainers"
+    given-names: "MilkTriFormer"
+license: "MIT"

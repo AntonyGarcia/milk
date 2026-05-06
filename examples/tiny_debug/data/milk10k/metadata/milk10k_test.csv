@@ -1,0 +1,3 @@
+lesion,derm_path,field_path,age,sex,anatom_site,skin_tone
+tiny_005_test,images/dermoscopy/tiny_005_derm.jpg,images/clinical/tiny_005_clin.jpg,55,female,back,3
+tiny_006_test,images/dermoscopy/tiny_006_derm.jpg,images/clinical/tiny_006_clin.jpg,60,male,torso,3

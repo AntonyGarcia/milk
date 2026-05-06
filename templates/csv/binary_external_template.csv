@@ -1,0 +1,2 @@
+image_id,image_path,binary_label,age,sex,anatom_site,dataset,is_synthetic,sample_weight
+ISIC20_0001,images/ISIC20_0001.jpg,1,63,male,torso,isic2020,0,0.5

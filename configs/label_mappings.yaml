@@ -1,0 +1,52 @@
+classes:
+  - AKIEC
+  - BCC
+  - BEN_OTH
+  - BKL
+  - DF
+  - INF
+  - MAL_OTH
+  - MEL
+  - NV
+  - SCCKA
+  - VASC
+
+# Conservative aliases. Dataset-specific ambiguous diagnoses should be reviewed manually.
+aliases:
+  akiec: AKIEC
+  ack: AKIEC
+  actinic keratosis: AKIEC
+  bowen disease: AKIEC
+  intraepidermal carcinoma: AKIEC
+  bcc: BCC
+  basal cell carcinoma: BCC
+  bkl: BKL
+  benign keratosis: BKL
+  seborrheic keratosis: BKL
+  solar lentigo: BKL
+  df: DF
+  dermatofibroma: DF
+  inf: INF
+  inflammatory: INF
+  infectious: INF
+  mel: MEL
+  melanoma: MEL
+  nv: NV
+  nevus: NV
+  naevus: NV
+  melanocytic nevus: NV
+  scc: SCCKA
+  squamous cell carcinoma: SCCKA
+  keratoacanthoma: SCCKA
+  vasc: VASC
+  hemangioma: VASC
+  angioma: VASC
+  pyogenic granuloma: VASC
+
+review_required:
+  BEN_OTH:
+    note: "Use only after manual review of benign proliferative diagnoses not covered by other classes."
+  MAL_OTH:
+    note: "Use only after manual review of non-melanoma, non-BCC, non-SCC malignant proliferations."
+  INF:
+    note: "Public clinical datasets may include broad inflammatory diseases; avoid noisy mapping unless MILK-like."

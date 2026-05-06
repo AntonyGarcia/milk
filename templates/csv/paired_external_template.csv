@@ -1,0 +1,2 @@
+lesion,derm_path,field_path,label,age,sex,anatom_site,dataset,is_synthetic,sample_weight
+D7P_0001,images/dermoscopy/D7P_0001_derm.jpg,images/clinical/D7P_0001_clin.jpg,MEL,58,female,back,derm7pt,0,0.6

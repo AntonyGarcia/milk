@@ -1,0 +1,2 @@
+image_id,image_path,label,age,sex,anatom_site,fitzpatrick,dataset,is_synthetic,sample_weight
+ISIC_0000001,images/ISIC_0000001.jpg,NV,55,male,torso,,isic2019,0,0.8

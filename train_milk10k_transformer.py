@@ -1662,7 +1662,10 @@ def save_checkpoint(
 
 
 def load_checkpoint(path: str, model: nn.Module, optimizer: Optional[torch.optim.Optimizer] = None, scheduler: Optional[LambdaLR] = None, scaler: Optional[Any] = None, map_location: str = "cpu") -> Dict[str, Any]:
-    ckpt = torch.load(path, map_location=map_location)
+    try:
+        ckpt = torch.load(path, map_location=map_location, weights_only=False)
+    except TypeError:
+        ckpt = torch.load(path, map_location=map_location)
     model.load_state_dict(ckpt["model"], strict=True)
     if optimizer is not None and ckpt.get("optimizer") is not None:
         optimizer.load_state_dict(ckpt["optimizer"])

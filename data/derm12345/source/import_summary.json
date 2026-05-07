@@ -1,0 +1,34 @@
+{
+  "skipped_rows": 12,
+  "skipped_source_labels": {
+    "ch": 12
+  },
+  "source_main_rows": 12345,
+  "source_supplemental_rows": 12345,
+  "source_test_class_counts": {
+    "AKIEC": 19,
+    "BCC": 85,
+    "BEN_OTH": 7,
+    "BKL": 135,
+    "DF": 36,
+    "MAL_OTH": 7,
+    "MEL": 82,
+    "NV": 2000,
+    "SCCKA": 54,
+    "VASC": 57
+  },
+  "train_class_counts": {
+    "AKIEC": 76,
+    "BCC": 338,
+    "BEN_OTH": 24,
+    "BKL": 540,
+    "DF": 144,
+    "MAL_OTH": 22,
+    "MEL": 318,
+    "NV": 7952,
+    "SCCKA": 212,
+    "VASC": 225
+  },
+  "written_source_test_rows": 2482,
+  "written_train_rows": 9851
+}

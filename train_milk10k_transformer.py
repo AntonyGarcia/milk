@@ -68,9 +68,11 @@ except ImportError as exc:  # pragma: no cover
     ) from exc
 
 try:
-    from sklearn.metrics import roc_auc_score
+    from sklearn.metrics import average_precision_score, roc_auc_score, roc_curve
 except Exception:  # sklearn is optional; AUROC will be skipped if unavailable.
+    average_precision_score = None
     roc_auc_score = None
+    roc_curve = None
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -84,18 +86,16 @@ DATA_ROOT = "./data"
 
 USE_MILK10K = True
 USE_ISIC2019 = True
-USE_ISIC2020 = False
-USE_ISIC2024_SLICE3D = False
+USE_ISIC2020 = True
+USE_ISIC2024_SLICE3D = True
 USE_MEDNODE = True
+USE_MN187 = True
 USE_EDINBURGH = True
 USE_PAD_UFES_20 = True
-USE_DERM7PT = False
+USE_DERM7PT = True
 USE_PH2 = False
-USE_HAM10000 = False
-USE_BCN20000 = False
-USE_DERM12345 = False
-USE_DDI = False
-USE_DDI2 = False
+USE_BCN20000 = True
+USE_DERM12345 = True
 USE_SCIN = False
 USE_SYNTHETIC = True
 USE_METADATA = True
@@ -169,9 +169,9 @@ BATCHES_PER_EPOCH = None
 
 TRAINING_STAGES = [
     {
-        "name": "stage1_milk_external_synthetic_domain_robust",
-        "epochs": max(1, int(EPOCHS * 0.65)),
-        "include_milk": True,
+        "name": "stage1_external_only_milk_validated",
+        "epochs": EPOCHS,
+        "include_milk": False,
         "include_external": True,
         "include_synthetic": USE_SYNTHETIC,
         "milk_only": False,
@@ -179,19 +179,6 @@ TRAINING_STAGES = [
         "backbone_lr_mult": BACKBONE_LR_MULT,
         "domain_loss_weight": 0.05,
         "binary_aux_loss_weight": 0.15,
-        "freeze_backbone_epochs": 0,
-    },
-    {
-        "name": "stage2_milk_focused_finetune",
-        "epochs": max(1, EPOCHS - max(1, int(EPOCHS * 0.65))),
-        "include_milk": True,
-        "include_external": False,
-        "include_synthetic": False,
-        "milk_only": True,
-        "learning_rate": LEARNING_RATE * 0.25,
-        "backbone_lr_mult": BACKBONE_LR_MULT * 0.50,
-        "domain_loss_weight": 0.0,
-        "binary_aux_loss_weight": 0.05,
         "freeze_backbone_epochs": 0,
     },
 ]
@@ -212,6 +199,9 @@ VALIDATE_EVERY_EPOCH = True
 VAL_THRESHOLD_OPTIMIZATION = True
 THRESHOLD_GRID = np.linspace(0.05, 0.95, 91).tolist()
 SAVE_LAST_EVERY_EPOCH = True
+VALIDATE_ON_ALL_LABELED_MILK = True
+MILK_VALIDATION_SPLITS = ("train", "val")
+PARTIAL_AUC_MIN_SENSITIVITY = 0.80
 
 # Inference / submission generation.
 RUN_INFERENCE_AFTER_TRAIN = True
@@ -291,7 +281,7 @@ LABEL_ALIASES = {
     "ben_oth": "BEN_OTH", "benign other": "BEN_OTH", "other benign": "BEN_OTH",
     "bkl": "BKL", "bk": "BKL", "benign keratosis": "BKL", "benign keratosis-like lesions": "BKL",
     "seborrheic keratosis": "BKL", "seborrhoeic keratosis": "BKL", "sk": "BKL", "sek": "BKL",
-    "solar lentigo": "BKL", "lichenoid keratosis": "BKL", "lichen planus like keratosis": "BKL",
+    "lichenoid keratosis": "BKL", "lichen planus like keratosis": "BKL",
     "df": "DF", "dermatofibroma": "DF",
     "inf": "INF", "inflammatory": "INF", "inflammatory or infectious diseases": "INF", "infection": "INF", "infectious": "INF",
     "verruca": "INF", "wart": "INF", "molluscum": "INF", "porokeratosis": "INF",
@@ -338,7 +328,7 @@ DATASET_CONFIGS = [
     {
         "name": "isic2020",
         "enabled": USE_ISIC2020,
-        "role": "external_binary",
+        "role": "external",
         "root": "isic2020",
         "train_csv": "metadata/isic2020_train.csv",
         "val_csv": "",
@@ -351,7 +341,7 @@ DATASET_CONFIGS = [
     {
         "name": "isic2024_slice3d",
         "enabled": USE_ISIC2024_SLICE3D,
-        "role": "external_binary",
+        "role": "external",
         "root": "isic2024_slice3d",
         "train_csv": "metadata/isic2024_train.csv",
         "val_csv": "",
@@ -372,6 +362,19 @@ DATASET_CONFIGS = [
         "default_modality": "field",
         "dataset_weight": 0.50,
         "sampling_weight": 0.40,
+        "is_synthetic": False,
+    },
+    {
+        "name": "mn187",
+        "enabled": USE_MN187,
+        "role": "external",
+        "root": "mn187",
+        "train_csv": "metadata/mn187_train.csv",
+        "val_csv": "",
+        "test_csv": "",
+        "default_modality": "derm",
+        "dataset_weight": 0.35,
+        "sampling_weight": 0.30,
         "is_synthetic": False,
     },
     {
@@ -427,19 +430,6 @@ DATASET_CONFIGS = [
         "is_synthetic": False,
     },
     {
-        "name": "ham10000",
-        "enabled": USE_HAM10000,
-        "role": "external",
-        "root": "ham10000",
-        "train_csv": "metadata/ham10000_train.csv",
-        "val_csv": "",
-        "test_csv": "",
-        "default_modality": "derm",
-        "dataset_weight": 0.45,
-        "sampling_weight": 0.35,
-        "is_synthetic": False,
-    },
-    {
         "name": "bcn20000",
         "enabled": USE_BCN20000,
         "role": "external",
@@ -463,32 +453,6 @@ DATASET_CONFIGS = [
         "default_modality": "derm",
         "dataset_weight": 0.45,
         "sampling_weight": 0.35,
-        "is_synthetic": False,
-    },
-    {
-        "name": "ddi",
-        "enabled": USE_DDI,
-        "role": "external",
-        "root": "ddi",
-        "train_csv": "metadata/ddi_train.csv",
-        "val_csv": "",
-        "test_csv": "",
-        "default_modality": "field",
-        "dataset_weight": 0.25,
-        "sampling_weight": 0.20,
-        "is_synthetic": False,
-    },
-    {
-        "name": "ddi2",
-        "enabled": USE_DDI2,
-        "role": "external",
-        "root": "ddi2",
-        "train_csv": "metadata/ddi2_train.csv",
-        "val_csv": "",
-        "test_csv": "",
-        "default_modality": "field",
-        "dataset_weight": 0.25,
-        "sampling_weight": 0.20,
         "is_synthetic": False,
     },
     {
@@ -985,6 +949,26 @@ def build_records_for_stage(stage: Dict[str, Any], split: str, dataset_id_map: D
         if not stage_allows_config(stage, cfg, split):
             continue
         dataset_id = dataset_id_map.get(cfg["name"], len(dataset_id_map))
+        records.extend(read_records_from_config(cfg, split, dataset_id))
+    return records
+
+
+def get_dataset_config(name: str) -> Optional[Dict[str, Any]]:
+    for cfg in DATASET_CONFIGS:
+        if cfg.get("name") == name:
+            return cfg
+    return None
+
+
+def build_all_labeled_milk_validation_records(dataset_id_map: Dict[str, int]) -> List[DatasetRecord]:
+    cfg = get_dataset_config("milk10k")
+    if cfg is None or not cfg.get("enabled", False):
+        return []
+    dataset_id = dataset_id_map.get("milk10k", len(dataset_id_map))
+    records: List[DatasetRecord] = []
+    for split in MILK_VALIDATION_SPLITS:
+        if split not in {"train", "val"}:
+            raise ValueError(f"MILK_VALIDATION_SPLITS can contain only 'train' and 'val', got {split!r}")
         records.extend(read_records_from_config(cfg, split, dataset_id))
     return records
 
@@ -1569,6 +1553,132 @@ def compute_auroc(probs: np.ndarray, targets: np.ndarray) -> Dict[str, Any]:
     }
 
 
+def mean_optional(values: Iterable[Optional[float]]) -> Optional[float]:
+    valid = [float(v) for v in values if v is not None and np.isfinite(float(v))]
+    return float(np.mean(valid)) if valid else None
+
+
+def compute_average_precision(probs: np.ndarray, targets: np.ndarray) -> Dict[str, Any]:
+    if average_precision_score is None:
+        return {"macro_average_precision": None, "per_class_average_precision": {c: None for c in CLASS_NAMES}}
+    aps: List[Optional[float]] = []
+    for c in range(NUM_CLASSES):
+        y = targets[:, c]
+        if y.sum() == 0:
+            aps.append(None)
+            continue
+        try:
+            aps.append(float(average_precision_score(y, probs[:, c])))
+        except Exception:
+            aps.append(None)
+    return {
+        "macro_average_precision": mean_optional(aps),
+        "per_class_average_precision": {CLASS_NAMES[i]: aps[i] for i in range(NUM_CLASSES)},
+    }
+
+
+def partial_auc_at_min_sensitivity(y_true: np.ndarray, y_score: np.ndarray, min_sensitivity: float) -> Optional[float]:
+    if roc_curve is None:
+        return None
+    if y_true.sum() == 0 or y_true.sum() == len(y_true):
+        return None
+    try:
+        fpr, tpr, _ = roc_curve(y_true, y_score)
+    except Exception:
+        return None
+    unique_tpr = np.unique(tpr)
+    if len(unique_tpr) < 2:
+        return None
+    min_fpr_at_tpr = np.asarray([np.min(fpr[tpr == value]) for value in unique_tpr], dtype=np.float64)
+    grid = np.linspace(float(min_sensitivity), 1.0, 201)
+    fpr_interp = np.interp(grid, unique_tpr, min_fpr_at_tpr)
+    specificity = 1.0 - fpr_interp
+    width = max(1e-12, 1.0 - float(min_sensitivity))
+    return float(np.trapezoid(specificity, grid) / width)
+
+
+def compute_partial_auc_sensitivity(probs: np.ndarray, targets: np.ndarray, min_sensitivity: float) -> Dict[str, Any]:
+    values = [
+        partial_auc_at_min_sensitivity(targets[:, c], probs[:, c], min_sensitivity)
+        for c in range(NUM_CLASSES)
+    ]
+    return {
+        "macro_auc_sens_gt_80": mean_optional(values),
+        "per_class_auc_sens_gt_80": {CLASS_NAMES[i]: values[i] for i in range(NUM_CLASSES)},
+    }
+
+
+def compute_category_metric_table(
+    probs: np.ndarray,
+    targets: np.ndarray,
+    thresholds: np.ndarray,
+) -> Dict[str, Dict[str, Any]]:
+    pred = (probs >= thresholds.reshape(1, -1)).astype(np.int32)
+    true = (targets >= 0.5).astype(np.int32)
+    tp = (pred * true).sum(axis=0).astype(np.float64)
+    fp = (pred * (1 - true)).sum(axis=0).astype(np.float64)
+    fn = ((1 - pred) * true).sum(axis=0).astype(np.float64)
+    tn = ((1 - pred) * (1 - true)).sum(axis=0).astype(np.float64)
+    n = np.maximum(tp + fp + fn + tn, 1e-12)
+
+    auc = compute_auroc(probs, targets)
+    auc_sens = compute_partial_auc_sensitivity(probs, targets, PARTIAL_AUC_MIN_SENSITIVITY)
+    ap = compute_average_precision(probs, targets)
+
+    metric_values: Dict[str, List[Optional[float]]] = {
+        "AUC": [auc["per_class_auroc"][c] for c in CLASS_NAMES],
+        "AUC, Sens >80%": [auc_sens["per_class_auc_sens_gt_80"][c] for c in CLASS_NAMES],
+        "Average Precision": [ap["per_class_average_precision"][c] for c in CLASS_NAMES],
+        "Accuracy": [float(v) for v in ((tp + tn) / n)],
+        "Sensitivity": [float(v) for v in (tp / np.maximum(tp + fn, 1e-12))],
+        "Specificity": [float(v) for v in (tn / np.maximum(tn + fp, 1e-12))],
+        "Dice Coefficient": [float(v) for v in ((2.0 * tp) / np.maximum(2.0 * tp + fp + fn, 1e-12))],
+        "PPV": [float(v) for v in (tp / np.maximum(tp + fp, 1e-12))],
+        "NPV": [float(v) for v in (tn / np.maximum(tn + fn, 1e-12))],
+    }
+    return {
+        metric_name: {
+            "mean": mean_optional(values),
+            "per_class": {CLASS_NAMES[i]: values[i] for i in range(NUM_CLASSES)},
+        }
+        for metric_name, values in metric_values.items()
+    }
+
+
+def format_metric_value(value: Optional[float]) -> str:
+    if value is None or not np.isfinite(float(value)):
+        return "NA"
+    return f"{float(value):.3f}"
+
+
+def print_category_metric_table(metrics: Dict[str, Any]) -> None:
+    table = metrics.get("category_metrics_tuned_threshold")
+    if not table:
+        return
+    columns = ["Category Metrics", "Mean"] + CLASS_NAMES
+    widths = [23, 7] + [7 for _ in CLASS_NAMES]
+    print("\nValidation category metrics (tuned thresholds)")
+    print(" ".join(col.ljust(widths[i]) for i, col in enumerate(columns)))
+    for metric_name in [
+        "AUC",
+        "AUC, Sens >80%",
+        "Average Precision",
+        "Accuracy",
+        "Sensitivity",
+        "Specificity",
+        "Dice Coefficient",
+        "PPV",
+        "NPV",
+    ]:
+        row = table[metric_name]
+        values = [metric_name, format_metric_value(row["mean"])]
+        values.extend(format_metric_value(row["per_class"].get(c)) for c in CLASS_NAMES)
+        print(" ".join(str(value).ljust(widths[i]) for i, value in enumerate(values)))
+    agg = metrics.get("balanced_accuracy_argmax")
+    if agg is not None:
+        print(f"Aggregate Metrics      Balanced Multiclass Accuracy={agg:.3f}")
+
+
 def calibration_bias_from_thresholds(thresholds: np.ndarray) -> np.ndarray:
     thr = np.clip(thresholds.astype(np.float64), 1e-4, 1.0 - 1e-4)
     # sigmoid(logit + bias) >= 0.5 iff sigmoid(logit) >= threshold when bias=-logit(thr).
@@ -1852,6 +1962,7 @@ def validate(
 
     argm = argmax_metrics(probs, targets)
     auroc = compute_auroc(probs, targets)
+    category_metrics_tuned = compute_category_metric_table(probs, targets, thresholds)
 
     metrics.update({
         "macro_f1_0p5": stats_05["macro_f1"],
@@ -1875,6 +1986,11 @@ def validate(
         "per_class_precision_argmax": {CLASS_NAMES[i]: float(argm["per_class_precision_argmax"][i]) for i in range(NUM_CLASSES)},
         "macro_auroc": auroc["macro_auroc"],
         "per_class_auroc": auroc["per_class_auroc"],
+        "macro_auc_sens_gt_80": category_metrics_tuned["AUC, Sens >80%"]["mean"],
+        "per_class_auc_sens_gt_80": category_metrics_tuned["AUC, Sens >80%"]["per_class"],
+        "macro_average_precision": category_metrics_tuned["Average Precision"]["mean"],
+        "per_class_average_precision": category_metrics_tuned["Average Precision"]["per_class"],
+        "category_metrics_tuned_threshold": category_metrics_tuned,
     })
 
     if binary_logits_all:
@@ -1999,16 +2115,22 @@ def main() -> None:
     print(f"Dataset IDs: {dataset_id_map}")
     print(f"Metadata dim: {METADATA_DIM}")
 
-    # Build validation set once. Only target validation is used for checkpoint selection.
+    # Build validation set once. Initial training keeps MILK out of the optimizer and uses
+    # all labeled MILK records as target-domain feedback.
     val_stage = {"include_milk": True, "include_external": False, "include_synthetic": False}
-    val_records = build_records_for_stage(val_stage, "val", dataset_id_map)
+    if VALIDATE_ON_ALL_LABELED_MILK:
+        val_records = build_all_labeled_milk_validation_records(dataset_id_map)
+        validation_name = "validation_all_labeled_milk"
+    else:
+        val_records = build_records_for_stage(val_stage, "val", dataset_id_map)
+        validation_name = "validation"
     if len(val_records) == 0:
         warnings.warn(
-            "No validation records found. Check milk10k/metadata/milk10k_val.csv. "
+            "No validation records found. Check milk10k metadata CSVs. "
             "The script will train but cannot select a reliable best checkpoint."
         )
     else:
-        val_summary = summarize_records(val_records, "validation")
+        val_summary = summarize_records(val_records, validation_name)
         safe_json_dump(val_summary, str(Path(LOG_DIR) / f"validation_summary_{run_id}.json"))
     val_loader = make_eval_loader(val_records) if val_records else None
 
@@ -2096,6 +2218,7 @@ def main() -> None:
                 last_thresholds = thresholds
                 row["val"] = val_metrics
                 print(f"Epoch {global_epoch} val   | {format_metrics(val_metrics)}")
+                print_category_metric_table(val_metrics)
                 score = float(val_metrics.get(BEST_MODEL_METRIC, -float("inf")))
                 if score > best_score:
                     best_score = score

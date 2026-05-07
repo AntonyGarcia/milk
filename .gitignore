@@ -23,6 +23,7 @@ data/**/images/**
 data/**/metadata/*.csv
 !data/**/metadata/*template*.csv
 !data/**/metadata/README.md
+data/**/source/**
 
 # Example debug outputs
 examples/tiny_debug/checkpoints/*.pt

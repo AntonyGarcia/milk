@@ -1,14 +1,28 @@
 {
-  "skipped_rows": 12,
+  "additional_filtered_counts": {
+    "dfsp": 4,
+    "la": 56,
+    "mpd": 9,
+    "sa": 14,
+    "sl": 60
+  },
+  "additional_filtered_rows": 143,
+  "metadata_row_counts": {
+    "derm12345_source_test.csv": 2446,
+    "derm12345_train.csv": 9713
+  },
+  "referenced_images_kept": 12159,
+  "skipped_rows": 43,
   "skipped_source_labels": {
-    "ch": 12
+    "ch": 12,
+    "isl": 6,
+    "ls": 25
   },
   "source_main_rows": 12345,
   "source_supplemental_rows": 12345,
   "source_test_class_counts": {
     "AKIEC": 19,
     "BCC": 85,
-    "BEN_OTH": 7,
     "BKL": 135,
     "DF": 36,
     "MAL_OTH": 7,
@@ -17,10 +31,10 @@
     "SCCKA": 54,
     "VASC": 57
   },
+  "strict_mapping_revision": "Filtered out diagnoses/source labels that are adjacent or broad but not explicit project class aliases.",
   "train_class_counts": {
     "AKIEC": 76,
     "BCC": 338,
-    "BEN_OTH": 24,
     "BKL": 540,
     "DF": 144,
     "MAL_OTH": 22,
@@ -29,6 +43,55 @@
     "SCCKA": 212,
     "VASC": 225
   },
-  "written_source_test_rows": 2482,
-  "written_train_rows": 9851
+  "written_binary_counts": {
+    "0": 8757,
+    "1": 956
+  },
+  "written_class_counts": {
+    "AKIEC": 76,
+    "BCC": 338,
+    "BKL": 492,
+    "DF": 144,
+    "MAL_OTH": 12,
+    "MEL": 318,
+    "NV": 7952,
+    "SCCKA": 212,
+    "VASC": 169
+  },
+  "written_source_diagnosis_counts": {
+    "acb": 30,
+    "acd": 7,
+    "ajb": 340,
+    "ajd": 230,
+    "ak": 47,
+    "alm": 48,
+    "angk": 31,
+    "anm": 60,
+    "bcc": 338,
+    "bd": 29,
+    "bdb": 131,
+    "cb": 577,
+    "ccb": 336,
+    "ccd": 25,
+    "cd": 396,
+    "cjb": 114,
+    "db": 446,
+    "df": 144,
+    "ha": 133,
+    "jb": 981,
+    "jd": 4213,
+    "ks": 12,
+    "lk": 6,
+    "lm": 68,
+    "lmm": 20,
+    "mcb": 99,
+    "mel": 122,
+    "pg": 5,
+    "rd": 12,
+    "scc": 212,
+    "sk": 486,
+    "srjd": 15
+  },
+  "written_source_test_rows": 2475,
+  "written_train_rows": 9713
 }
